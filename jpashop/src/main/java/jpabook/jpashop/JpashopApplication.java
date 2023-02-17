@@ -13,7 +13,5 @@ public class JpashopApplication {
 		System.out.println(hello.getData());
 
 		SpringApplication.run(JpashopApplication.class, args);
-
 	}
-
 }
