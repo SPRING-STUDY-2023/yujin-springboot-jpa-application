@@ -9,6 +9,7 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.repository.MemberRepository;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,8 +54,8 @@ public class OrderService {
     order.cancel(); // JPA가 변경된 부분들을 더티체킹해서 알아서 update 쿼리를 날림, jpa를 사용하지 않으면 다 update문 날려야함
   }
   //검색
-//  public List<Order> findOrders(OrderSearch orderSearch) {
-//    return orderRepository.findAll(orderSearch);
-//  }
+  public List<Order> findOrders(OrderSearch orderSearch) {
+    return orderRepository.findAll(orderSearch);
+  }
 
 }
