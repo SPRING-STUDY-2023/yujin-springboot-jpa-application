@@ -9,7 +9,7 @@ spring: #띄어쓰기 없음
     suffix: .html
   jpa: #띄어쓰기 2칸
     hibernate: #띄어쓰기 4칸
-      ddl-auto: none #띄어쓰기 6칸
+      ddl-auto: create #띄어쓰기 6칸
       naming:
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
     properties: #띄어쓰기 4칸
