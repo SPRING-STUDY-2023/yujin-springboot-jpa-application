@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -24,6 +25,8 @@ public class Member {
   private String name;
   @Embedded // 내장 타입이다! 라는 것을 알아볼 수 있음
   private Address address;
+
+  @JsonIgnore
   @OneToMany(mappedBy = "member") // Order에 있는 member에 패핑된 거울일뿐
   private List<Order> orders = new ArrayList<>();
 }
