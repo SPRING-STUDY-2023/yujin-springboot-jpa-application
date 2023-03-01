@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
 import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -55,7 +56,7 @@ public class OrderRepository {
       }
       jpql += " m.name like :name";
     }
-    TypedQuery<Order> query = em.createQuery(jpql, Order.class) .setMaxResults(1000); //최대 1000건
+    TypedQuery<Order> query = em.createQuery(jpql, Order.class).setMaxResults(1000); //최대 1000건
     if (orderSearch.getOrderStatus() != null) {
       query = query.setParameter("status", orderSearch.getOrderStatus());
     }
@@ -72,6 +73,7 @@ public class OrderRepository {
 //        .setMaxResults(1000)
 //        .getResultList();
   }
+
   public List<Order> findAllByCriteria(OrderSearch orderSearch) {
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<Order> cq = cb.createQuery(Order.class);
@@ -101,20 +103,38 @@ public class OrderRepository {
     return em.createQuery(
         "select o from Order o"
             + " join fetch o.member m"
-            + " join fetch o.delivery d",  Order.class
+            + " join fetch o.delivery d", Order.class
     ).getResultList();
   }
 
-  // 원하는 부분만 select 하는 것
-  // 재사용성이 없음
-  // API 스펙에 맞춘 코드가 리포지토리에 들어가는 단점
-  public List<OrderSimpleQueryDto> findOrderDtos() {
+  // ORDER를 기준으로 페이징을 하고 싶은데, 뻥튀기된 데이터를 기준으로 페이징 처리가 되어서 안됨
+  public List<Order> findAllWithItem() {
     return em.createQuery(
-        "select new jpabook.jpashop.repository."
-            + "OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address)" +
-        " from Order o" +
-            " join o.member m" +
-            " join o.delivery d", OrderSimpleQueryDto.class)
-    .getResultList();
+            "select distinct o from Order o" +
+                " join fetch o.member m" +
+                " join fetch o.delivery d" +
+                " join fetch o.orderItems oi" +
+                " join fetch oi.item i", Order.class)
+        .getResultList();
+  }
+
+  public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+    return em.createQuery(
+            "select o from Order o" +
+                " join fetch o.member m" +
+                " join fetch o.delivery d", Order.class)
+        .setFirstResult(offset)
+        .setMaxResults(limit).getResultList();
+  }
+
+  public List<OrderFlatDto> findAllByDto_flat() {
+    return em.createQuery(
+            "select new jpabook.jpashop.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+            " from Order o" +
+                " join o.member m" +
+                " join o.delivery d" +
+                " join o.orderItems oi" +
+                " join oi.item i", OrderFlatDto.class)
+        .getResultList();
   }
 }

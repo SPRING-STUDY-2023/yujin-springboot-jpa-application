@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 // 화면에 종속된 조회전용으로 보이게끔
+// 원하는 부분만 select 하는 것
+// 재사용성이 없음
+// API 스펙에 맞춘 코드가 리포지토리에 들어가는 단점
 public class OrderSimpleQueryRepository {
   private final EntityManager em;
   public List<OrderSimpleQueryDto> findOrderDtos() {
