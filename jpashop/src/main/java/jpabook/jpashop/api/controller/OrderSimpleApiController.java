@@ -26,7 +26,7 @@ public class OrderSimpleApiController {
 
   @GetMapping("api/v1/simple-orders")
   public List<Order> ordersV1() {
-    List<Order> all = orderRepository.findAll(new OrderSearch());
+    List<Order> all = orderRepository.findAllString(new OrderSearch());
     for (Order order : all) {
       order.getMember().getName(); //Lazy 강제 초기화 : Member에 쿼리를 날려서 실행됨
       order.getDelivery().getAddress(); //Lazy 강제 초기환
@@ -37,7 +37,7 @@ public class OrderSimpleApiController {
   @GetMapping("/api/v2/simple-orders")
   public List<SimpleOrderDto> ordersV2() {
 
-    return orderRepository.findAll(new OrderSearch()).stream()
+    return orderRepository.findAllString(new OrderSearch()).stream()
         .map(o -> new SimpleOrderDto(o)).collect(toList());
   }
 

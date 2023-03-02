@@ -13,7 +13,6 @@ import java.util.List;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.repository.order.query.OrderFlatDto;
-import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -33,6 +32,31 @@ public class OrderRepository {
   }
 
   public List<Order> findAll(OrderSearch orderSearch) {
+    QOrder order = QOrder.order;
+    QMember member = QMember.member;
+    return query
+        .select(order)
+        .from(order)
+        .join(order.member, member)
+        .where(statusEq(orderSearch.getOrderStatus()),
+            nameLike(orderSearch.getMemberName()))
+        .limit(1000)
+        .fetch();
+  }
+  private BooleanExpression statusEq(OrderStatus statusCond) {
+    if (statusCond == null) {
+      return null;
+    }
+    return order.status.eq(statusCond);
+  }
+  private BooleanExpression nameLike(String nameCond) {
+    if (!StringUtils.hasText(nameCond)) {
+      return null;
+    }
+    return member.name.like(nameCond);
+  }
+
+  public List<Order> findAllString(OrderSearch orderSearch) {
 
     String jpql = "select o From Order o join o.member m";
     boolean isFirstCondition = true;
